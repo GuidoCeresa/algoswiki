@@ -16,7 +16,7 @@ print('Algoswiki - creato (NON sovrascritto) WikiBootStrap')
 print('------------')
 
 // copy Readme into project
-sourceFile = "${pluginBasedir}/grails-app/README"
+sourceFile = "${pluginBasedir}/README"
 targetFile = "${basedir}/README-Wiki"
 ant.copy(file: sourceFile, tofile: targetFile, overwrite: true)
 ant.delete(file: sourceFile)
