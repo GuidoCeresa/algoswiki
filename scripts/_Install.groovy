@@ -15,12 +15,3 @@ print('------------')
 print('Algoswiki - creato (NON sovrascritto) WikiBootStrap')
 print('------------')
 
-// copy Readme into project
-sourceFile = "${pluginBasedir}/README"
-targetFile = "${basedir}/README-Wiki"
-ant.copy(file: sourceFile, tofile: targetFile, overwrite: true)
-ant.delete(file: sourceFile)
-
-print('------------')
-print('Algoswiki - creato (o sovrascritto) README-Wiki')
-print('------------')
