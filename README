@@ -1,5 +1,5 @@
 Plugin per gestire le funzionalità di accesso a wikipedia.
-Grails: 2.4.1
+Grails: 2.4.2
 
 DataBase: utilizza il DB dell'applicazione finale (esclusi dal JAR)
 Views: utilizza i propri templates per creare i file .gsp

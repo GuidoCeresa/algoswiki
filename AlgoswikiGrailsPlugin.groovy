@@ -3,10 +3,10 @@
 //
 class AlgoswikiGrailsPlugin {
     // the plugin version
-    def version = "0.90"
+    def version = "0.91"
 
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "2.4.1 > *"
+    def grailsVersion = "2.4.2 > *"
 
     // the other plugins this plugin depends on
     def dependsOn = [:]

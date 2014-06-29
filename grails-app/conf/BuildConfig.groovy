@@ -62,8 +62,8 @@ grails.project.dependency.resolution = {
         build ":release:3.0.1"
 
         //--plugins for the compile step
-        compile ":scaffolding:2.1.1"
-        compile ':cache:1.1.6'
+        compile ':cache:1.1.7'
+        compile ":scaffolding:2.1.2"
         compile ":asset-pipeline:1.8.11"
 
         //--plugins needed at runtime but not for compilation
@@ -78,7 +78,7 @@ grails.project.dependency.resolution = {
 //            runtime ":filterpane:2.4.2"
 
         //--plugin della algos
-        compile ":algoslib:0.52"
+        compile ":algoslib:0.54"
 
     }// fine della closure plugins
 }// fine di grails.project.dependency.resolution
