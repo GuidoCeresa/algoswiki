@@ -340,7 +340,7 @@ class WikiService {
         if (testo) {
             posIni = testo.indexOf(tagIni)
             posIni += tagIni.length()
-            posEnd = testo.indexOf(tagEnd, posIni)
+            posEnd = testo.lastIndexOf(tagEnd)
             continua = (posIni != -1 && posEnd != -1)
         }// fine del blocco if
 
@@ -409,12 +409,42 @@ class WikiService {
                     valore = partiDellaRiga[1]
                     valore = LibTesto.levaCoda(valore, ',')
                     valore = LibTesto.levaBase(valore, '"', '"')
-                    mappa.put(chiave, valore)
+                    mappa.put(chiave, checkGraffe(valore))
                 }// fine del blocco if
             } // fine del ciclo each
         }// fine del blocco if
 
         return mappa
+    } // fine del metodo
+
+    private def checkGraffe(String valoreIn) {
+        def valore = null
+        String valoreOut = valoreIn
+        String tagIni = '{'
+        String tagEnd = '}'
+        def parti
+
+        if (valoreOut) {
+            valoreOut = valoreOut.trim()
+        }// fine del blocco if
+
+        if (valoreOut.startsWith(tagIni) && valoreOut.endsWith(tagEnd)) {
+            valoreOut = LibTesto.levaTesta(valoreOut, tagIni)
+            valoreOut = LibTesto.levaCoda(valoreOut, tagEnd)
+            valoreOut = valoreOut.trim()
+            parti = valoreOut.split(',')
+            if (parti) {
+                valore = new ArrayList()
+                parti?.each {
+                    valore.add(LibTesto.levaBase(it, '"', '"'))
+                } // fine del ciclo each
+            }// fine del blocco if
+        } else {
+            valore = valoreOut
+        }// fine del blocco if-else
+
+
+        return valore
     } // fine del metodo
 
     // Estrae una mappa da un testo formattato JSON
