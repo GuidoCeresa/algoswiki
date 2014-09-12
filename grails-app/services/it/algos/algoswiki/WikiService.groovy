@@ -423,6 +423,7 @@ class WikiService {
         String tagIni = '{'
         String tagEnd = '}'
         def parti
+        String parte
 
         if (valoreOut) {
             valoreOut = valoreOut.trim()
@@ -436,7 +437,10 @@ class WikiService {
             if (parti) {
                 valore = new ArrayList()
                 parti?.each {
-                    valore.add(LibTesto.levaBase(it, '"', '"'))
+                    parte = (String) it
+                    parte = parte = parte.trim()
+                    parte = LibTesto.levaBase(parte, '"', '"')
+                    valore.add(parte)
                 } // fine del ciclo each
             }// fine del blocco if
         } else {
