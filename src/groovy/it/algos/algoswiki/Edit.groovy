@@ -39,8 +39,8 @@ class Edit {
 
     //--risultato finale
     private Risultato risultato = Risultato.nonElaborata
-
     private TipoQuery tipoQuery = TipoQuery.title
+    public boolean registrata = false
 
     //--costruttore di default per il sistema (a volte serve)
     public Edit() {
@@ -86,6 +86,7 @@ class Edit {
 
     protected void inizializza() {
         this.checkLogin()
+        registrata = false
 
         //--controllo di congruità
         //--login obbligatorio
@@ -442,6 +443,7 @@ class Edit {
             testoModificato = QueryVoce.getTesto(titoloVoce)
             this.setTestoSecondaRequest(testoModificato)
             this.setRisultato(Risultato.modificaRegistrata)
+            registrata = true
         } else {
             this.setRisultato(Risultato.erroreGenerico)
         }// fine del blocco if-else
