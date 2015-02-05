@@ -10,13 +10,14 @@ public enum TipoAllineamento {
 
     left('left', '', ''),
     right('right', '', ''),
-    randomBaseSin('left', '', '"right"'),
-    randomBaseDex('right', '"left"', ''),
-    secondaSinistra('left', '"left"', 'right')
+    randomBaseSin('left', '', 'right'),
+    randomBaseDex('right', 'left', ''),
+    secondaSinistra('left', 'left', 'right'),
+    terzaSinistra('left', 'left', 'right')
 
     private static String BASE_TITOLO = 'text-align:'
-    private static String BASE_CELLA = '|align='
-    private static String TAG_FINALE = ';'
+    private static String BASE_CELLA = '|style="text-align: '
+    private static String TAG_FINALE = ';"'
     String titolo
     String testo
     String numero

@@ -2497,9 +2497,9 @@ class WikiLib {
                     }// fine del blocco if-else
                 } else {
                     if (cella in Number) {
-                        txtAlign = align.getNumero()
+                        txtAlign = TipoAllineamento.randomBaseSin.getNumero()
                     } else {
-                        txtAlign = align.getTesto()
+                        txtAlign = TipoAllineamento.randomBaseDex.getTesto()
                     }// fine del blocco if
                 }// fine del blocco if-else
                 if (cella in Number) {
