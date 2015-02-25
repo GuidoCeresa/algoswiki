@@ -2,6 +2,7 @@ package it.algos.algoswiki
 
 import grails.converters.JSON
 import it.algos.algoslib.Lib
+import it.algos.algoslib.LibArray
 import it.algos.algoslib.LibMat
 import it.algos.algoslib.LibTesto
 import it.algos.algoslib.LibWiki
@@ -25,6 +26,7 @@ class WikiLib {
     private static final String PIPE = '|'
     private static final String DOPPIOPIPE = '||'
     private static final String PRIMOTAG = '|-'
+    private static final String SPAZIO = '&nbsp;'
 
     private static final String TAG_UGUALE = '='
     private static final String TAG_NOTE = '<ref'
@@ -32,6 +34,20 @@ class WikiLib {
     private static final String TAG_NASCOSTO = '<!--'
 
     private static final String TAG_BIO = " ?(\\\\n)?[Bb]io"
+
+    // campi di una mappa per la table
+    public static final String MAPPA_TITOLI = 'mappaTableListaTitoli'
+    public static final String MAPPA_LISTA = 'mappaTableListaRighe'
+    public static final String MAPPA_CAPTION = 'mappaTableCaption'
+    public static final String MAPPA_SORTABLE = 'mappaTableSortable'
+    public static final String MAPPA_LISTA_SORTABLE = 'mappaTableListaSortable'
+    public static final String MAPPA_FONT_SIZE = 'mappaTableFontSize'
+    public static final String MAPPA_COLOR_TITOLI = 'mappaTableColorTitoli'
+    public static final String MAPPA_COLOR_RIGHE = 'mappaTableColorRighe'
+    public static final String MAPPA_BACKGROUND_TITOLI = 'mappaTableBackgroundTitoli'
+    public static final String MAPPA_BACKGROUND_RIGHE = 'mappaTableBackgroundRighe'
+    public static final String MAPPA_NUMERI_FORMATTATI = 'mappaTableNumeriFormattati'
+    public static final String MAPPA_NUMERAZIONE_PROGRESSIVA = 'mappaTableNumerazioneProgressiva'
 
     /**
      * Estrae una mappa dalla risposta (formattata JSON) ad una Request generica
@@ -2515,5 +2531,240 @@ class WikiLib {
         // valore di ritorno
         return testoRiga.substring(sep.length()).trim()
     }// fine della closure
+
+    /**
+     * Crea una table
+     *
+     * default:
+     * width=50%
+     * align=center
+     * text-align=right
+     * font-size=100%
+     * background:#FFF
+     * bgcolor="#EFEFEF"
+     *
+     * @param lista di righe - il primo elemento sono i titoli
+     * @return testo
+     */
+    public static String creaTable(Map mappa) {
+        String testo = ''
+        String header
+        String titoli
+        String body
+        String bottom
+
+        // controllo esistenza della mappa
+        if (!(mappa && mappa.size() > 1)) {
+            return testo
+        }// fine del blocco if
+
+        // controllo congruità base della mappa
+        if (!isTableValida(mappa)) {
+            return testo
+        }// fine del blocco if
+
+        // inizio tabella
+        header = creaTableHeader(mappa)
+        header += ACAPO
+
+        // titoli
+        titoli = creaTableTitoli(mappa)
+        titoli += ACAPO
+
+        // body
+        body = creaTableBody(mappa)
+        body += ACAPO
+
+        // chiusura
+        bottom = '|}'
+
+        // impacchetta tutto
+        testo = header + titoli + body + bottom
+
+        return testo.trim()
+    }// fine del metodo
+
+    public static boolean isTableValida(Map mappa) {
+        ArrayList<String> listaTitoli = null
+        ArrayList<String> listaRighe = null
+        int numColonneTitoli = 0
+        int numColonneRighe = 0
+
+        // controllo parametri essenziali della mappa
+        if (mappa[MAPPA_TITOLI]) {
+            if (mappa[MAPPA_TITOLI] instanceof ArrayList<String>) {
+                listaTitoli = (ArrayList<String>) mappa[MAPPA_TITOLI]
+            }// fine del blocco if
+            if (mappa[MAPPA_TITOLI] in String) {
+                listaTitoli = LibArray.creaLista((String) mappa[MAPPA_TITOLI])
+            }// fine del blocco if
+        }// fine del blocco if
+        if (mappa[MAPPA_LISTA] in ArrayList) {
+            listaRighe = (ArrayList) mappa[MAPPA_LISTA]
+        }// fine del blocco if
+
+        // controllo congruità base della mappa
+        if (listaTitoli) {
+            numColonneTitoli = listaTitoli.size()
+        }// fine del blocco if
+        if (numColonneTitoli == 0) {
+            return false
+        }// fine del blocco if
+        if (listaRighe && listaRighe.size() > 0) {
+            numColonneRighe = listaRighe[0].size()
+        }// fine del blocco if
+        if (numColonneTitoli != numColonneRighe) {
+            return false
+        }// fine del blocco if
+        if (numColonneTitoli == 0) {
+            return false
+        }// fine del blocco if
+        if (numColonneRighe == 0) {
+            return false
+        }// fine del blocco if
+
+        return true
+    }// fine del metodo
+
+    public static String creaTableHeader(Map mappa) {
+        String header
+        boolean sortable = false
+
+        // controllo parametri della mappa
+        if (mappa[MAPPA_SORTABLE] in Boolean) {
+            sortable = mappa[MAPPA_SORTABLE]
+        }// fine del blocco if
+
+        // inizio tabella
+        if (sortable) {
+            header = '{|class="wikitable sortable"'
+        } else {
+            header = '{|class="wikitable"'
+        }// fine del blocco if-else
+
+        return header
+    }// fine del metodo
+
+
+    public static String creaTableTitoli(Map mappa) {
+        String titoli = ''
+        ArrayList<String> listaTitoli = null
+        String titolo = ''
+        String tagUno = '!'
+        String tagDue = tagUno + tagUno
+        boolean numerazioneProgressiva = false
+        String colonnaProgressivo = SPAZIO + '#' + SPAZIO
+
+        if (mappa[MAPPA_TITOLI] instanceof ArrayList<String>) {
+            listaTitoli = (ArrayList<String>) mappa[MAPPA_TITOLI]
+        }// fine del blocco if
+        if (mappa[MAPPA_TITOLI] in String) {
+            listaTitoli = LibArray.creaLista((String) mappa[MAPPA_TITOLI])
+        }// fine del blocco if
+
+        if (mappa[MAPPA_NUMERAZIONE_PROGRESSIVA] in Boolean) {
+            numerazioneProgressiva = mappa[MAPPA_NUMERAZIONE_PROGRESSIVA]
+        }// fine del blocco if
+
+        if (listaTitoli && listaTitoli.size() > 0) {
+            titoli += tagUno
+
+            if (numerazioneProgressiva) {
+                titoli += colonnaProgressivo
+                titoli += tagDue
+            }// fine del blocco if
+
+            listaTitoli?.each {
+                titolo = SPAZIO + it + SPAZIO
+                titoli += titolo
+                titoli += tagDue
+            } // fine del ciclo each
+            titoli = LibTesto.levaCoda(titoli, tagDue)
+        }// fine del blocco if
+
+        return titoli
+    }// fine del metodo
+
+    public static String creaTableBody(Map mappa) {
+        String body = ''
+        ArrayList<String> listaRighe = null
+        ArrayList singolaRiga
+        String tagRiga = '|-'
+        String tagCampo = '|'
+        int pos = 0
+
+        if (mappa[MAPPA_LISTA] in ArrayList) {
+            listaRighe = (ArrayList) mappa[MAPPA_LISTA]
+        }// fine del blocco if
+
+        if (listaRighe && listaRighe.size() > 0) {
+            listaRighe.each {
+                pos++
+                body += tagRiga
+                body += ACAPO
+                singolaRiga = (ArrayList) it
+                body += creaTableRiga(mappa, singolaRiga, pos)
+                body = LibTesto.levaCoda(body, tagCampo)
+                body += ACAPO
+            }// fine di each
+        }// fine del blocco if
+
+        return body.trim()
+    }// fine del metodo
+
+    public static String creaTableRiga(Map mappa, ArrayList singolaRiga, int pos) {
+        String body = ''
+        String tagRiga = '|-'
+        String tagCampo = '|'
+        def value
+        String txtAlign = TipoAllineamento.randomBaseSin.getNumero()
+        boolean numerazioneProgressiva = false
+        boolean numero = false
+        boolean numeriFormattati = true
+
+        if (mappa[MAPPA_NUMERAZIONE_PROGRESSIVA] in Boolean) {
+            numerazioneProgressiva = mappa[MAPPA_NUMERAZIONE_PROGRESSIVA]
+        }// fine del blocco if
+
+        if (mappa[MAPPA_NUMERI_FORMATTATI] in Boolean) {
+            numeriFormattati = mappa[MAPPA_NUMERI_FORMATTATI]
+        }// fine del blocco if
+
+        body += tagRiga
+        body += ACAPO
+
+        if (numerazioneProgressiva) {
+            body += txtAlign
+            body += tagCampo
+            body += pos
+            body += SPAZIO
+            body += tagCampo
+        }// fine del blocco if
+
+        singolaRiga?.each {
+            numero = false
+            value = it
+            if (value in Number) {
+                numero = true
+                if (numeriFormattati) {
+                    value = LibTesto.formatNum(value)
+                }// fine del blocco if
+                body += txtAlign
+            }// fine del blocco if
+            body += tagCampo
+            if (value in String) {
+                body += SPAZIO
+            }// fine del blocco if
+            body += value
+            if (numero) {
+                body += SPAZIO
+            }// fine del blocco if
+            body += tagCampo
+        } // fine del ciclo each
+        body = LibTesto.levaCoda(body, tagCampo)
+        body += ACAPO
+
+        return body.trim()
+    }// fine del metodo
 
 } // fine della classe
