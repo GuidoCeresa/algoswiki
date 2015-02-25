@@ -2629,6 +2629,8 @@ class WikiLib {
     public static String creaTableHeader(Map mappa) {
         String header
         boolean sortable = false
+        String bgColorBody = ' style="background-color:#EFEFEF;"'
+        String beColorTitle = '|-style bgcolor="#CCC"'
 
         // controllo parametri della mappa
         if (mappa[MAPPA_SORTABLE] in Boolean) {
@@ -2642,6 +2644,10 @@ class WikiLib {
             header = '{|class="wikitable"'
         }// fine del blocco if-else
 
+        header += bgColorBody
+        header += ACAPO
+        header += beColorTitle
+
         return header
     }// fine del metodo
 
@@ -2649,11 +2655,8 @@ class WikiLib {
     public static String creaTableTitoli(Map mappa) {
         String titoli = ''
         ArrayList<String> listaTitoli = null
-        String titolo = ''
-        String tagUno = '!'
-        String tagDue = tagUno + tagUno
         boolean numerazioneProgressiva = false
-        String colonnaProgressivo = SPAZIO + '#' + SPAZIO
+        String titoloColonnaProgressivo = '#'
 
         if (mappa[MAPPA_TITOLI] instanceof ArrayList<String>) {
             listaTitoli = (ArrayList<String>) mappa[MAPPA_TITOLI]
@@ -2667,22 +2670,28 @@ class WikiLib {
         }// fine del blocco if
 
         if (listaTitoli && listaTitoli.size() > 0) {
-            titoli += tagUno
 
             if (numerazioneProgressiva) {
-                titoli += colonnaProgressivo
-                titoli += tagDue
+                titoli += creaTableSingoloTitolo(titoloColonnaProgressivo)
             }// fine del blocco if
 
             listaTitoli?.each {
-                titolo = SPAZIO + it + SPAZIO
-                titoli += titolo
-                titoli += tagDue
+                titoli += creaTableSingoloTitolo(it)
             } // fine del ciclo each
-            titoli = LibTesto.levaCoda(titoli, tagDue)
         }// fine del blocco if
 
-        return titoli
+        return titoli.trim()
+    }// fine del metodo
+
+    public static String creaTableSingoloTitolo(String nome) {
+        String titolo = ''
+        String tag = '|'
+
+        titolo += tag
+        titolo += SPAZIO + LibWiki.setBold(nome) + SPAZIO
+        titolo += ACAPO
+
+        return titolo
     }// fine del metodo
 
     public static String creaTableBody(Map mappa) {
@@ -2700,8 +2709,6 @@ class WikiLib {
         if (listaRighe && listaRighe.size() > 0) {
             listaRighe.each {
                 pos++
-                body += tagRiga
-                body += ACAPO
                 singolaRiga = (ArrayList) it
                 body += creaTableRiga(mappa, singolaRiga, pos)
                 body = LibTesto.levaCoda(body, tagCampo)
