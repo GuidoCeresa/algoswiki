@@ -2690,7 +2690,7 @@ class WikiLib {
 
         titolo += tag
         if (!sortable) {
-            titolo +=   tagUnSortable
+            titolo += tagUnSortable
         }// fine del blocco if
         titolo += SPAZIO + LibWiki.setBold(nome) + SPAZIO
         titolo += ACAPO
@@ -2760,6 +2760,10 @@ class WikiLib {
                 if (numeriFormattati) {
                     value = LibTesto.formatNum(value)
                 }// fine del blocco if
+                body += txtAlign
+            }// fine del blocco if
+            if (value in String && value.startsWith('{{formatnum')) {
+                numero = true
                 body += txtAlign
             }// fine del blocco if
             body += tagCampo
