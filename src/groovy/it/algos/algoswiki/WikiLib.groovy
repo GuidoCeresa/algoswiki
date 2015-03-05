@@ -2672,22 +2672,26 @@ class WikiLib {
         if (listaTitoli && listaTitoli.size() > 0) {
 
             if (numerazioneProgressiva) {
-                titoli += creaTableSingoloTitolo(titoloColonnaProgressivo)
+                titoli += creaTableSingoloTitolo(titoloColonnaProgressivo, false)
             }// fine del blocco if
 
             listaTitoli?.each {
-                titoli += creaTableSingoloTitolo(it)
+                titoli += creaTableSingoloTitolo(it, true)
             } // fine del ciclo each
         }// fine del blocco if
 
         return titoli.trim()
     }// fine del metodo
 
-    public static String creaTableSingoloTitolo(String nome) {
+    public static String creaTableSingoloTitolo(String nome, boolean sortable) {
         String titolo = ''
-        String tag = '|'
+        String tag = '!'
+        String tagUnSortable = ' class="unsortable" | '
 
         titolo += tag
+        if (!sortable) {
+            titolo +=   tagUnSortable
+        }// fine del blocco if
         titolo += SPAZIO + LibWiki.setBold(nome) + SPAZIO
         titolo += ACAPO
 
