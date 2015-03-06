@@ -5,6 +5,9 @@ package it.algos.algoswiki
  */
 class WikiLibTest extends GroovyTestCase {
 
+    private static final String ACAPO = '\n'
+    private static final String ACAPO_DUE = ACAPO + ACAPO
+
     def wikiService = new WikiService()
 
     // Setup logic here
@@ -39,7 +42,7 @@ class WikiLibTest extends GroovyTestCase {
         titoliTre.add('ga')
 
         righeDoppie.add(21)
-        righeDoppie.add(37)
+        righeDoppie.add(37000)
         righeTriple.add(18560)
         righeTriple.add('alfa')
         righeTriple.add(876543)
@@ -95,27 +98,38 @@ class WikiLibTest extends GroovyTestCase {
         assert login.isBot()
 
         mappa = new HashMap()
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Due colonne')
         mappa.put(WikiLib.MAPPA_TITOLI, titoliDue)
         mappa.put(WikiLib.MAPPA_LISTA, listaDue)
-        testoPagina = WikiLib.creaTable(mappa)
+        testoPagina +=  WikiLib.creaTable(mappa)
         assert testoPagina
 
         mappa = new HashMap()
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Tre colonne non sortable')
         mappa.put(WikiLib.MAPPA_TITOLI, titoliTre)
         mappa.put(WikiLib.MAPPA_LISTA, listaTre)
-        testoPagina = WikiLib.creaTable(mappa)
-        assert testoPagina
-
         mappa.put(WikiLib.MAPPA_SORTABLE, false)
-        testoPagina = WikiLib.creaTable(mappa)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Sortable')
+        mappa.put(WikiLib.MAPPA_SORTABLE, true)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
+        assert testoPagina
+
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Numeri formattati')
         mappa.put(WikiLib.MAPPA_NUMERI_FORMATTATI, true)
-        testoPagina = WikiLib.creaTable(mappa)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Numerazione progressiva')
         mappa.put(WikiLib.MAPPA_NUMERAZIONE_PROGRESSIVA, true)
-        testoPagina = WikiLib.creaTable(mappa)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
+        assert testoPagina
+
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Prog non sortable')
+        mappa.put(WikiLib.MAPPA_SORTABLE, false)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 
         new Edit(login, titoloPagina, testoPagina, summary)

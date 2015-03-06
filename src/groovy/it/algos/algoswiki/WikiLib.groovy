@@ -2629,12 +2629,17 @@ class WikiLib {
     public static String creaTableHeader(Map mappa) {
         String header
         boolean sortable = false
+        String titolo = ''
+        String tagTitolo = '|+ style="text-align: left" | '
         String bgColorBody = ' style="background-color:#EFEFEF;"'
         String beColorTitle = '|-style bgcolor="#CCC"'
 
         // controllo parametri della mappa
         if (mappa[MAPPA_SORTABLE] in Boolean) {
             sortable = mappa[MAPPA_SORTABLE]
+        }// fine del blocco if
+        if (mappa[MAPPA_CAPTION] && mappa[MAPPA_CAPTION] in String) {
+            titolo = mappa[MAPPA_CAPTION]
         }// fine del blocco if
 
         // inizio tabella
@@ -2644,9 +2649,16 @@ class WikiLib {
             header = '{|class="wikitable"'
         }// fine del blocco if-else
 
-        header += bgColorBody
+        if (!sortable) {
+            header += bgColorBody
+        }// fine del blocco if
+
         header += ACAPO
         header += beColorTitle
+        if (titolo) {
+            header += ACAPO
+            header += tagTitolo + titolo
+        }// fine del blocco if
 
         return header
     }// fine del metodo
@@ -2672,27 +2684,45 @@ class WikiLib {
         if (listaTitoli && listaTitoli.size() > 0) {
 
             if (numerazioneProgressiva) {
-                titoli += creaTableSingoloTitolo(titoloColonnaProgressivo, false)
+                titoli += creaTableSingoloTitolo(mappa, titoloColonnaProgressivo, false)
             }// fine del blocco if
 
             listaTitoli?.each {
-                titoli += creaTableSingoloTitolo(it, true)
+                titoli += creaTableSingoloTitolo(mappa, it, true)
             } // fine del ciclo each
         }// fine del blocco if
 
         return titoli.trim()
     }// fine del metodo
 
-    public static String creaTableSingoloTitolo(String nome, boolean sortable) {
+    public static String creaTableSingoloTitolo(Map mappa, String nome, boolean colonnaSortable) {
         String titolo = ''
-        String tag = '!'
-        String tagUnSortable = ' class="unsortable" | '
+        String tagNormale = '|'
+        String tagSortable = '!'
+        String tag = tagNormale
+        String tagColonnaUnSortable = ' class="unsortable" | '
+        boolean creaSpazi = false
+
+        // controllo parametri della mappa
+        if (mappa[MAPPA_SORTABLE] in Boolean) {
+            if (mappa[MAPPA_SORTABLE]) {
+                tag = tagSortable
+            } else {
+                tag = tagNormale
+            }// fine del blocco if-else
+        }// fine del blocco if
 
         titolo += tag
-        if (!sortable) {
-            titolo += tagUnSortable
+        if (!colonnaSortable) {
+            titolo += tagColonnaUnSortable
         }// fine del blocco if
-        titolo += SPAZIO + LibWiki.setBold(nome) + SPAZIO
+        if (creaSpazi) {
+            titolo += SPAZIO
+        }// fine del blocco if
+        titolo += LibWiki.setBold(nome)
+        if (creaSpazi) {
+            titolo += SPAZIO
+        }// fine del blocco if
         titolo += ACAPO
 
         return titolo
@@ -2731,7 +2761,7 @@ class WikiLib {
         String txtAlign = TipoAllineamento.randomBaseSin.getNumero()
         boolean numerazioneProgressiva = false
         boolean numero = false
-        boolean numeriFormattati = true
+        boolean numeriFormattati = false
 
         if (mappa[MAPPA_NUMERAZIONE_PROGRESSIVA] in Boolean) {
             numerazioneProgressiva = mappa[MAPPA_NUMERAZIONE_PROGRESSIVA]
@@ -2755,12 +2785,8 @@ class WikiLib {
         singolaRiga?.each {
             numero = false
             value = it
-            if (value in Number) {
-                numero = true
-                if (numeriFormattati) {
-                    value = LibTesto.formatNum(value)
-                }// fine del blocco if
-                body += txtAlign
+            if (value in Number && numeriFormattati) {
+                value = '{{formatnum:' + value + '}}'
             }// fine del blocco if
             if (value in String && value.startsWith('{{formatnum')) {
                 numero = true
