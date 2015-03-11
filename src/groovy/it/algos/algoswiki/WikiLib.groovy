@@ -27,15 +27,16 @@ class WikiLib {
     private static final String DOPPIOPIPE = '||'
     private static final String PRIMOTAG = '|-'
     private static final String SPAZIO = '&nbsp;'
+    private static final String aSpazio = ' '
 
     private static final String TAG_UGUALE = '='
     private static final String TAG_NOTE = '<ref'
     private static final String TAG_GRAFFE = '\\{\\{'
     private static final String TAG_NASCOSTO = '<!--'
-//    private static String GRIGIO_SCURO = ' style="background-color:#CCC;"'
-//    private static String GRIGIO_MEDIO = ' style="background-color:#EFEFEF;"'
-    private static String GRIGIO_SCURO = ' style="background-color:#AFE;"'
-    private static String GRIGIO_MEDIO = ' style="background-color:#AAF;"'
+    private static String GRIGIO_MEDIO = 'style="background-color:#CCC;"'
+    private static String GRIGIO_SCURO = 'style="background-color:#EFEFEF;"'
+//    private static String GRIGIO_SCURO = 'style="background-color:#AFE;"'
+//    private static String GRIGIO_MEDIO = 'style="background-color:#AAF;"'
 
     private static final String TAG_BIO = " ?(\\\\n)?[Bb]io"
 
@@ -2633,17 +2634,15 @@ class WikiLib {
 
     public static String creaTableHeader(Map mappa) {
         String header
-        boolean sortable = false
+        boolean sortable = true
         String caption = ''
         String tagTitolo = '|+ style="text-align: left" | '
         String bgColorBody = GRIGIO_SCURO
-        String bgColorTitle = GRIGIO_MEDIO
         boolean coloriScuri = true
 
         // controllo parametri della mappa
         if (mappa[MAPPA_SORTABLE] in Boolean) {
             sortable = mappa[MAPPA_SORTABLE]
-            coloriScuri = false
         }// fine del blocco if
         if (mappa[MAPPA_CAPTION] && mappa[MAPPA_CAPTION] in String) {
             caption = mappa[MAPPA_CAPTION]
@@ -2661,9 +2660,8 @@ class WikiLib {
         }// fine del blocco if-else
 
         if (coloriScuri) {
+            header += aSpazio
             header += bgColorBody
-//            header += ACAPO
-//            header += PRIMOTAG + bgColorTitle
         }// fine del blocco if
 
         if (caption) {
@@ -2678,7 +2676,7 @@ class WikiLib {
     public static String creaTableTitoli(Map mappa) {
         String titoli = ''
         ArrayList<String> listaTitoli = null
-        boolean numerazioneProgressiva = false
+        boolean numerazioneProgressiva = true
         String titoloColonnaProgressivo = '#'
         boolean coloriScuri = true
 
@@ -2700,10 +2698,12 @@ class WikiLib {
         if (listaTitoli && listaTitoli.size() > 0) {
             if (numerazioneProgressiva) {
                 titoli += creaTableSingoloTitolo(mappa, titoloColonnaProgressivo, false, coloriScuri)
+                def step
             }// fine del blocco if
 
             listaTitoli?.each {
                 titoli += creaTableSingoloTitolo(mappa, it, true, coloriScuri)
+                def stop
             } // fine del ciclo each
         }// fine del blocco if
 
@@ -2713,11 +2713,11 @@ class WikiLib {
     public
     static String creaTableSingoloTitolo(Map mappa, String nome, boolean colonnaSortable, boolean coloriScuri) {
         String titolo = ''
-        String tagNormale = ' | '
+        String tagNormale = '|'
         String tagSortable = '!'
         String tag = tagNormale
-        String tagColonnaUnSortable = ' class="unsortable"'
-        boolean tableSortable = false
+        String tagColonnaUnSortable = 'class="unsortable"'
+        boolean tableSortable = true
         boolean creaSpazi = false
         String parametri = ''
         String bgColorTitle = GRIGIO_MEDIO
@@ -2731,19 +2731,26 @@ class WikiLib {
                 tag = PIPE
                 tableSortable = false
             }// fine del blocco if-else
-        }// fine del blocco if
+        } else {
+            tag = tagSortable
+            tableSortable = true
+        }// fine del blocco if-else
 
         titolo += tag
         if (tableSortable && !colonnaSortable) {
-            parametri += tagColonnaUnSortable
+            parametri += aSpazio + tagColonnaUnSortable
         }// fine del blocco if
         if (coloriScuri) {
-            parametri += bgColorTitle
+            parametri += aSpazio + bgColorTitle
         }// fine del blocco if
         if (parametri) {
-            titolo += parametri + tagNormale
+            titolo += parametri + aSpazio + tagNormale
         }// fine del blocco if
 
+        // spazio per leggere il codice sorgente
+        titolo += aSpazio
+
+        // spazio visibile a video
         if (creaSpazi) {
             titolo += SPAZIO
         }// fine del blocco if
@@ -2772,6 +2779,8 @@ class WikiLib {
             listaRighe.each {
                 pos++
                 singolaRiga = (ArrayList) it
+                body += tagRiga
+                body += ACAPO
                 body += creaTableRiga(mappa, singolaRiga, pos)
                 body = LibTesto.levaCoda(body, tagCampo)
                 body += ACAPO
@@ -2783,13 +2792,13 @@ class WikiLib {
 
     public static String creaTableRiga(Map mappa, ArrayList singolaRiga, int pos) {
         String body = ''
-        String tagRiga = '|-'
         String tagCampo = '|'
         def value
         String txtAlign = TipoAllineamento.randomBaseSin.getNumero()
-        boolean numerazioneProgressiva = false
+        boolean numerazioneProgressiva = true
         boolean numero = false
-        boolean numeriFormattati = false
+        boolean numeriFormattati = true
+        boolean allineatoADestra = false
 
         if (mappa[MAPPA_NUMERAZIONE_PROGRESSIVA] in Boolean) {
             numerazioneProgressiva = mappa[MAPPA_NUMERAZIONE_PROGRESSIVA]
@@ -2799,28 +2808,36 @@ class WikiLib {
             numeriFormattati = mappa[MAPPA_NUMERI_FORMATTATI]
         }// fine del blocco if
 
-        body += tagRiga
-        body += ACAPO
-
         if (numerazioneProgressiva) {
-            body += txtAlign
+            body += txtAlign + aSpazio
             body += tagCampo
+            body += aSpazio
             body += pos
             body += SPAZIO
+            body += aSpazio
             body += tagCampo
         }// fine del blocco if
 
         singolaRiga?.each {
             numero = false
             value = it
+            if (value in Number) {
+                allineatoADestra = true
+            }// fine del blocco if
+
             if (value in Number && numeriFormattati) {
                 value = '{{formatnum:' + value + '}}'
             }// fine del blocco if
             if (value in String && value.startsWith('{{formatnum')) {
+                allineatoADestra = true
                 numero = true
-                body += txtAlign
             }// fine del blocco if
+            if (allineatoADestra) {
+                body += txtAlign + aSpazio
+            }// fine del blocco if
+
             body += tagCampo
+            body += aSpazio
             if (value in String) {
                 body += SPAZIO
             }// fine del blocco if
@@ -2828,6 +2845,7 @@ class WikiLib {
             if (numero) {
                 body += SPAZIO
             }// fine del blocco if
+            body += aSpazio
             body += tagCampo
         } // fine del ciclo each
         body = LibTesto.levaCoda(body, tagCampo)

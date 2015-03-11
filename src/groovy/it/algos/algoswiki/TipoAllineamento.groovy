@@ -16,7 +16,7 @@ public enum TipoAllineamento {
     terzaSinistra('left', 'left', 'right')
 
     private static String BASE_TITOLO = 'text-align:'
-    private static String BASE_CELLA = '|style="text-align: '
+    private static String BASE_CELLA = '| style="text-align: '
     private static String TAG_FINALE = ';"'
     String titolo
     String testo

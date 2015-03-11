@@ -146,9 +146,10 @@ class WikiLibTest extends GroovyTestCase {
 
         // default
         mappa = new HashMap()
-        mappa.put(WikiLib.MAPPA_CAPTION, 'All algoswiki')
-        mappa.put(WikiLib.MAPPA_NUMERAZIONE_PROGRESSIVA, true)
-        mappa.put(WikiLib.MAPPA_SORTABLE, true)
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Simple algoswiki')
+        mappa.put(WikiLib.MAPPA_NUMERAZIONE_PROGRESSIVA, false)
+        mappa.put(WikiLib.MAPPA_NUMERI_FORMATTATI, false)
+        mappa.put(WikiLib.MAPPA_SORTABLE, false)
         mappa.put(WikiLib.MAPPA_TITOLI, titoliTre)
         mappa.put(WikiLib.MAPPA_LISTA, listaTre)
         testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
