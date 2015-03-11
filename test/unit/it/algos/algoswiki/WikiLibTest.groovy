@@ -42,7 +42,7 @@ class WikiLibTest extends GroovyTestCase {
         titoliTre.add('ga')
 
         righeDoppie.add(21)
-        righeDoppie.add(37000)
+        righeDoppie.add('scritta molto lunga per avere il testo della caption')
         righeTriple.add(18560)
         righeTriple.add('alfa')
         righeTriple.add(876543)
@@ -51,7 +51,7 @@ class WikiLibTest extends GroovyTestCase {
         righeTriple2.add(1245003)
         righeTriple3.add(321)
         righeTriple3.add('si')
-        righeTriple3.add(67000)
+        righeTriple3.add('altra scritta molto lunga, speriamo che basti')
         righeTriple4.add(2)
         righeTriple4.add('no')
         righeTriple4.add(4567)
@@ -98,14 +98,16 @@ class WikiLibTest extends GroovyTestCase {
         assert login.isBot()
 
         mappa = new HashMap()
-        mappa.put(WikiLib.MAPPA_CAPTION, 'Due colonne')
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Due colonne, colori base mediawiki')
+        mappa.put(WikiLib.MAPPA_TITOLI_SCURI, false) // di default è true
         mappa.put(WikiLib.MAPPA_TITOLI, titoliDue)
         mappa.put(WikiLib.MAPPA_LISTA, listaDue)
         testoPagina +=  WikiLib.creaTable(mappa)
         assert testoPagina
 
         mappa = new HashMap()
-        mappa.put(WikiLib.MAPPA_CAPTION, 'Tre colonne non sortable')
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Tre colonne non sortable, colori base algoswiki')
+        mappa.put(WikiLib.MAPPA_TITOLI_SCURI, true) // di default è true
         mappa.put(WikiLib.MAPPA_TITOLI, titoliTre)
         mappa.put(WikiLib.MAPPA_LISTA, listaTre)
         mappa.put(WikiLib.MAPPA_SORTABLE, false)
@@ -117,18 +119,38 @@ class WikiLibTest extends GroovyTestCase {
         testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 
-        mappa.put(WikiLib.MAPPA_CAPTION, 'Numeri formattati')
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Numeri formattati e colori scuri')
         mappa.put(WikiLib.MAPPA_NUMERI_FORMATTATI, true)
         testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 
-        mappa.put(WikiLib.MAPPA_CAPTION, 'Numerazione progressiva')
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Numerazione progressiva e colori chiari')
+        mappa.put(WikiLib.MAPPA_TITOLI_SCURI, false)
         mappa.put(WikiLib.MAPPA_NUMERAZIONE_PROGRESSIVA, true)
         testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 
-        mappa.put(WikiLib.MAPPA_CAPTION, 'Prog non sortable')
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Progr non sortable')
+        mappa.put(WikiLib.MAPPA_TITOLI_SCURI, true) // di default è true
         mappa.put(WikiLib.MAPPA_SORTABLE, false)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
+        assert testoPagina
+
+        // default
+        mappa = new HashMap()
+        mappa.put(WikiLib.MAPPA_CAPTION, 'Default algoswiki')
+        mappa.put(WikiLib.MAPPA_TITOLI, titoliTre)
+        mappa.put(WikiLib.MAPPA_LISTA, listaTre)
+        testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
+        assert testoPagina
+
+        // default
+        mappa = new HashMap()
+        mappa.put(WikiLib.MAPPA_CAPTION, 'All algoswiki')
+        mappa.put(WikiLib.MAPPA_NUMERAZIONE_PROGRESSIVA, true)
+        mappa.put(WikiLib.MAPPA_SORTABLE, true)
+        mappa.put(WikiLib.MAPPA_TITOLI, titoliTre)
+        mappa.put(WikiLib.MAPPA_LISTA, listaTre)
         testoPagina += ACAPO_DUE + WikiLib.creaTable(mappa)
         assert testoPagina
 

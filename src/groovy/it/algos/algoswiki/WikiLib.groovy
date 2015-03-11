@@ -32,11 +32,16 @@ class WikiLib {
     private static final String TAG_NOTE = '<ref'
     private static final String TAG_GRAFFE = '\\{\\{'
     private static final String TAG_NASCOSTO = '<!--'
+//    private static String GRIGIO_SCURO = ' style="background-color:#CCC;"'
+//    private static String GRIGIO_MEDIO = ' style="background-color:#EFEFEF;"'
+    private static String GRIGIO_SCURO = ' style="background-color:#AFE;"'
+    private static String GRIGIO_MEDIO = ' style="background-color:#AAF;"'
 
     private static final String TAG_BIO = " ?(\\\\n)?[Bb]io"
 
     // campi di una mappa per la table
     public static final String MAPPA_TITOLI = 'mappaTableListaTitoli'
+    public static final String MAPPA_TITOLI_SCURI = 'mappaTableTitoliScuri'
     public static final String MAPPA_LISTA = 'mappaTableListaRighe'
     public static final String MAPPA_CAPTION = 'mappaTableCaption'
     public static final String MAPPA_SORTABLE = 'mappaTableSortable'
@@ -2629,17 +2634,23 @@ class WikiLib {
     public static String creaTableHeader(Map mappa) {
         String header
         boolean sortable = false
-        String titolo = ''
+        String caption = ''
         String tagTitolo = '|+ style="text-align: left" | '
-        String bgColorBody = ' style="background-color:#EFEFEF;"'
-        String beColorTitle = '|-style bgcolor="#CCC"'
+        String bgColorBody = GRIGIO_SCURO
+        String bgColorTitle = GRIGIO_MEDIO
+        boolean coloriScuri = true
 
         // controllo parametri della mappa
         if (mappa[MAPPA_SORTABLE] in Boolean) {
             sortable = mappa[MAPPA_SORTABLE]
+            coloriScuri = false
         }// fine del blocco if
         if (mappa[MAPPA_CAPTION] && mappa[MAPPA_CAPTION] in String) {
-            titolo = mappa[MAPPA_CAPTION]
+            caption = mappa[MAPPA_CAPTION]
+        }// fine del blocco if
+
+        if (mappa[MAPPA_TITOLI_SCURI] in Boolean) {
+            coloriScuri = mappa[MAPPA_TITOLI_SCURI]
         }// fine del blocco if
 
         // inizio tabella
@@ -2649,15 +2660,15 @@ class WikiLib {
             header = '{|class="wikitable"'
         }// fine del blocco if-else
 
-        if (!sortable) {
+        if (coloriScuri) {
             header += bgColorBody
+//            header += ACAPO
+//            header += PRIMOTAG + bgColorTitle
         }// fine del blocco if
 
-        header += ACAPO
-        header += beColorTitle
-        if (titolo) {
+        if (caption) {
             header += ACAPO
-            header += tagTitolo + titolo
+            header += tagTitolo + caption
         }// fine del blocco if
 
         return header
@@ -2669,6 +2680,7 @@ class WikiLib {
         ArrayList<String> listaTitoli = null
         boolean numerazioneProgressiva = false
         String titoloColonnaProgressivo = '#'
+        boolean coloriScuri = true
 
         if (mappa[MAPPA_TITOLI] instanceof ArrayList<String>) {
             listaTitoli = (ArrayList<String>) mappa[MAPPA_TITOLI]
@@ -2681,41 +2693,57 @@ class WikiLib {
             numerazioneProgressiva = mappa[MAPPA_NUMERAZIONE_PROGRESSIVA]
         }// fine del blocco if
 
-        if (listaTitoli && listaTitoli.size() > 0) {
+        if (mappa[MAPPA_TITOLI_SCURI] in Boolean) {
+            coloriScuri = mappa[MAPPA_TITOLI_SCURI]
+        }// fine del blocco if
 
+        if (listaTitoli && listaTitoli.size() > 0) {
             if (numerazioneProgressiva) {
-                titoli += creaTableSingoloTitolo(mappa, titoloColonnaProgressivo, false)
+                titoli += creaTableSingoloTitolo(mappa, titoloColonnaProgressivo, false, coloriScuri)
             }// fine del blocco if
 
             listaTitoli?.each {
-                titoli += creaTableSingoloTitolo(mappa, it, true)
+                titoli += creaTableSingoloTitolo(mappa, it, true, coloriScuri)
             } // fine del ciclo each
         }// fine del blocco if
 
         return titoli.trim()
     }// fine del metodo
 
-    public static String creaTableSingoloTitolo(Map mappa, String nome, boolean colonnaSortable) {
+    public
+    static String creaTableSingoloTitolo(Map mappa, String nome, boolean colonnaSortable, boolean coloriScuri) {
         String titolo = ''
-        String tagNormale = '|'
+        String tagNormale = ' | '
         String tagSortable = '!'
         String tag = tagNormale
-        String tagColonnaUnSortable = ' class="unsortable" | '
+        String tagColonnaUnSortable = ' class="unsortable"'
+        boolean tableSortable = false
         boolean creaSpazi = false
+        String parametri = ''
+        String bgColorTitle = GRIGIO_MEDIO
 
         // controllo parametri della mappa
         if (mappa[MAPPA_SORTABLE] in Boolean) {
             if (mappa[MAPPA_SORTABLE]) {
                 tag = tagSortable
+                tableSortable = true
             } else {
-                tag = tagNormale
+                tag = PIPE
+                tableSortable = false
             }// fine del blocco if-else
         }// fine del blocco if
 
         titolo += tag
-        if (!colonnaSortable) {
-            titolo += tagColonnaUnSortable
+        if (tableSortable && !colonnaSortable) {
+            parametri += tagColonnaUnSortable
         }// fine del blocco if
+        if (coloriScuri) {
+            parametri += bgColorTitle
+        }// fine del blocco if
+        if (parametri) {
+            titolo += parametri + tagNormale
+        }// fine del blocco if
+
         if (creaSpazi) {
             titolo += SPAZIO
         }// fine del blocco if
