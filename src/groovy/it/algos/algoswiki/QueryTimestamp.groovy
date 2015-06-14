@@ -44,7 +44,7 @@ class QueryTimestamp extends Query {
     protected String getDomain() {
         String domain
         String titolo
-        String tag = 'http://it.wikipedia.org/w/api.php?action=query&prop=revisions&format=json&rvprop=timestamp&pageids='
+        String tag = 'https://it.wikipedia.org/w/api.php?action=query&prop=revisions&format=json&rvprop=timestamp&pageids='
 
         titolo = this.getTitolo()
         domain = tag + titolo
@@ -58,7 +58,7 @@ class QueryTimestamp extends Query {
      * Estrae i valori e costruisce una mappa
      */
     protected void regolaRisultato() {
-        boolean continua = true
+        boolean continua = false
         ArrayList<WrapTime> listaWrapTime = new ArrayList<WrapTime>()
         ArrayList listaErrori = new ArrayList()
         String risultatoRequest
@@ -72,14 +72,20 @@ class QueryTimestamp extends Query {
 
         risultatoRequest = this.getRisultato()
 
+        if (risultatoRequest) {
+            continua = true
+        } else {
+            log.error 'risultato vuoto'
+        }// fine del blocco if-else
+
         if (continua) {
             mappaQuery = (HashMap) JSON.parse(risultatoRequest)
-            continua == (mappaQuery)
+            continua = (mappaQuery)
         }// fine del blocco if
 
         if (continua) {
             mappaPages = (HashMap) mappaQuery[query]
-            continua == (mappaPages)
+            continua = (mappaPages)
         }// fine del blocco if
 
         if (continua) {
@@ -89,7 +95,7 @@ class QueryTimestamp extends Query {
 
         if (continua) {
             mappaVoci = mappaNumId.values()
-            continua == (mappaVoci)
+            continua = (mappaVoci)
         }// fine del blocco if
 
         if (continua) {
