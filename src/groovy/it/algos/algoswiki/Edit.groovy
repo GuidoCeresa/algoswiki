@@ -278,7 +278,7 @@ class Edit {
         int pageid
         TipoQuery tipoQuery = this.getTipoQuery()
 
-        String tag = 'http://it.wikipedia.org/w/api.php?format=json&action=query'
+        String tag = 'https://it.wikipedia.org/w/api.php?format=json&action=query'
         String query = '&prop=info|revisions&intoken=edit'
         query += '&rvprop=content'
 
@@ -307,7 +307,7 @@ class Edit {
         String domain = ''
         int pageid = this.getPageid()
         String titolo
-        String tag = 'http://it.wikipedia.org/w/api.php?format=json&action=edit'
+        String tag = 'https://it.wikipedia.org/w/api.php?format=json&action=edit'
 
         if (pageid) {
             domain = tag + '&pageid=' + pageid
