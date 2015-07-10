@@ -1045,7 +1045,7 @@ class WikiLib {
 
         // cerco la prima doppia graffa che abbia all'interno
         // lo stesso numero di aperture e chiusure
-        //spazzola il testo fino a pareggiare le graffe
+        // spazzola il testo fino a pareggiare le graffe
         if (continua) {
             template = testo.substring(posIni, posEnd + tagEnd.length()).trim()
             while (!isPariTag(template, tagIni, tagEnd)) {

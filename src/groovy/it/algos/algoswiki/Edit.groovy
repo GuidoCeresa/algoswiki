@@ -155,7 +155,7 @@ class Edit {
         String stringa
         String risposta
 
-        // find the target
+        // find the targetURLEncoder
         domain = this.getPrimoDomain()
         connection = new URL(domain).openConnection()
         connection = this.regolaConnessione(connection)

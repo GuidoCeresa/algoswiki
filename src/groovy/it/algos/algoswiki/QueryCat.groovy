@@ -20,7 +20,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 abstract class QueryCat extends Query {
 
     private
-    static String QUERY_TAG = '&cmnamespace=0&cmsort=sortkey&cmdir=asc&cmlimit=max&list=categorymembers&cmtitle=Category:'
+    static String QUERY_TAG = '&cmnamespace=0&cmsort=sortkey&rawcontinue&cmdir=asc&cmlimit=max&list=categorymembers&cmtitle=Category:'
 
     // numero massimo di elementi restituiti dalle API
     //--500 utente normale
