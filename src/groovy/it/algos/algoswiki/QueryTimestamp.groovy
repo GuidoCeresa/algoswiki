@@ -132,7 +132,7 @@ class QueryTimestamp extends Query {
         WrapTime wrapTime = null
         int pageid
         String tagPageIni = '"pageid"'
-        String tagPageEnd = '}'
+        String tagPageEnd = ','
         String tagRev = 'revisions'
         String tagTime = 'timestamp'
         int posIni
